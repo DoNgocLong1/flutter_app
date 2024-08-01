@@ -4,6 +4,7 @@ class Input extends StatelessWidget {
   final String label;
   final bool obscureText;
   final String hintText;
+  final String error;
   final TextEditingController controller;
 
   const Input({
@@ -12,13 +13,14 @@ class Input extends StatelessWidget {
     this.obscureText = false,
     this.hintText = '',
     required this.controller,
+    this.error = '',
   });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         if (label.isNotEmpty) Text(label),
         const SizedBox(height: 10),
         TextField(
@@ -38,6 +40,12 @@ class Input extends StatelessWidget {
             hintText: hintText,
           ),
         ),
+        const SizedBox(height: 10),
+        if (error.isNotEmpty)
+          Text(
+            error,
+            style: const TextStyle(color: Colors.red),
+          ),
       ],
     );
   }

@@ -1,15 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/pages/home.dart';
 import 'package:flutter_app/pages/login_page.dart';
 import 'package:flutter_app/themes/light_mode.dart';
+import 'package:localstorage/localstorage.dart';
 
-void main() {
+late final ValueNotifier<int> notifier;
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initLocalStorage();
+
+  notifier = ValueNotifier(int.parse(localStorage.getItem('counter') ?? '0'));
+  notifier.addListener(() {
+    localStorage.setItem('counter', notifier.value.toString());
+  });
+
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool isAuth = false;
   // This widget is the root of your application.
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAuth();
+  }
+
+  void _checkAuth() {
+    final token = localStorage.getItem('token') ?? '';
+    setState(() {
+      isAuth = token.isNotEmpty;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -35,7 +67,7 @@ class MyApp extends StatelessWidget {
       // ),
       theme: lightMode,
       //home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      home: LoginPage(),
+      home: isAuth ? const HomePage() : LoginPage(),
     );
   }
 }
